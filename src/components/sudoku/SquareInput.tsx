@@ -8,10 +8,11 @@ interface Props {
 
 const SquareInput = ({ width, id, onFill }: Props) => {
   const stringId = id.toString();
+  const placeholder = (id % 9 + 1).toString();
   return (
     <Input
       id={stringId}
-      placeholder={stringId}
+      placeholder={placeholder}
       width={width}
       height={width}
       textAlign='center'

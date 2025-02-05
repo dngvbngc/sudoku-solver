@@ -66,9 +66,7 @@ function App() {
             </VStack>
           </Center>
           <Box>
-            {assignment.map((id) => (
-              <text>{id} </text>
-            ))}
+            <Box id='solution'>{assignment.toString()}</Box>
             <br></br>
             <Button onClick={solveSudoku}>Solve</Button>
             <Button onClick={clearSudoku}>Clear</Button>

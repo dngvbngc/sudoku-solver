@@ -120,22 +120,30 @@ const isAssignmentCompleted = (isSolved: number[]): boolean => {
 // Check consistency of assignment
 export const isAssignmentConsistent = (
   assignment: number[],
-  isSolved?: number[]
+  isSolved: number[]
 ): boolean => {
-  if (isSolved) {
-    for (var id of isSolved) {
-      const neighbors = getNeighbors(id);
-      for (var neighborId of neighbors) {
-        if (isSolved.includes(neighborId)) {
-          if (assignment[neighborId] == assignment[id]) {
-            return false;
-          }
+  for (var id of isSolved) {
+    const neighbors = getNeighbors(id);
+    for (var neighborId of neighbors) {
+      if (isSolved.includes(neighborId)) {
+        if (assignment[neighborId] == assignment[id]) {
+          return false;
         }
       }
     }
   }
 
   return true;
+};
+
+export const isAnyDomainsEmpty = (domains: number[][]): boolean => {
+  for (let id = 0; id < 81; id++) {
+    if (domains[id].length == 0) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 // Return neighbors of an id (in same row, col and block)
@@ -170,9 +178,15 @@ const backtrack = (
   domains: number[][]
 ): number[] | null => {
   // Base case: If assignment is complete and consistent, return assignment
+  console.log("These cells have been assigned: ");
+  console.log(isSolved);
+  console.log("Current assignment: ");
+  console.log(assignment);
+  console.log("Current domains: ");
+  console.log(domains);
   if (
     isAssignmentCompleted(isSolved) &&
-    isAssignmentConsistent(isSolved, assignment)
+    isAssignmentConsistent(assignment, isSolved)
   ) {
     return assignment;
   }
@@ -182,9 +196,19 @@ const backtrack = (
     return null;
   }
 
+  // If any domains is empty, also return null
+  if (isAnyDomainsEmpty(domains)) {
+    return null;
+  }
+
   // Backtrack from the first-ranked unassigned cell
   const unassignedCellIndex = selectUnassignedVariable(isSolved, domains);
+  console.log(`Processing next cell at id ${unassignedCellIndex}`);
   for (var possibleValue of domains[unassignedCellIndex]) {
+    console.log(
+      `Testing value ${possibleValue} for cell at id ${unassignedCellIndex}`
+    );
+    const newIsSolved = [...isSolved];
     const newAssignment = [...assignment];
     const newDomains = domains.map((domain) => [...domain]);
 
@@ -193,12 +217,14 @@ const backtrack = (
       addAnswer(unassignedCellIndex, possibleValue, newAssignment, newDomains);
 
     // Recursively solve the next cells
-    isSolved.push(unassignedCellIndex);
-    const result = backtrack(isSolved, updatedAssignment, updatedDomains);
+    newIsSolved.push(unassignedCellIndex);
+    const result = backtrack(newIsSolved, updatedAssignment, updatedDomains);
     if (result !== null) {
       return result;
     } else {
-      isSolved = removeFromArray(isSolved, unassignedCellIndex);
+      console.log(
+        `Backtracking: Choosing another value for cell at id ${unassignedCellIndex}`
+      );
     }
   }
 

@@ -12,8 +12,10 @@ import InputGrid from "./components/sudoku/InputGrid";
 import { useState } from "react";
 import { isAssignmentConsistent, sudokuSolver } from "./utils/utils";
 
+const defaultAssignment = Array(81).fill(-1);
+
 function App() {
-  const [assignment, setAssignment] = useState(Array(81).fill(-1));
+  const [assignment, setAssignment] = useState(defaultAssignment);
   const [isSolved, setIsSolved] = useState<number[]>([]);
   const [message, setMessage] = useState(
     "Fill in the Sudoku template to solve."
@@ -37,11 +39,15 @@ function App() {
       const result = sudokuSolver(assignment);
       if (result) {
         setAssignment(result);
-        setMessage("Solution found!");
+        setMessage("Solution found! See console for details.");
       } else {
         setMessage("Unable to solve.");
       }
     }
+  };
+
+  const clearSudoku = () => {
+    setAssignment(defaultAssignment);
   };
 
   return (
@@ -65,6 +71,7 @@ function App() {
             ))}
             <br></br>
             <Button onClick={solveSudoku}>Solve</Button>
+            <Button onClick={clearSudoku}>Clear</Button>
           </Box>
         </SimpleGrid>
       </Box>

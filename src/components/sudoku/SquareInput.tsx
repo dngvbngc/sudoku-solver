@@ -8,7 +8,7 @@ interface Props {
 
 const SquareInput = ({ width, id, onFill }: Props) => {
   const stringId = id.toString();
-  const placeholder = (id % 9 + 1).toString();
+  const placeholder = id.toString();
   return (
     <Input
       id={stringId}
